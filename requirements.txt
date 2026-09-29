@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+python-multipart
+pydantic
+pymupdf
+pytesseract
+opencv-python
+numpy
+pillow
+pandas
+streamlit
+plotly
+requests
+pytest

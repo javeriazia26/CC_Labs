@@ -1,5 +1,3 @@
-# JirLens
-
 # Secure Document AI — Ingestion & Authenticity Analysis (Hackathon MVP)
 
 Upload PDF/image → OCR → classify → extract entities → tamper/AI/metadata checks → mask PII → validate → risk score → dashboard.
