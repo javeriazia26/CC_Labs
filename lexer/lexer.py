@@ -1,4 +1,3 @@
-
 KEYWORDS = {
     "let": "LET",
     "print": "PRINT",
@@ -7,13 +6,16 @@ KEYWORDS = {
 }
 
 OPERATORS = {
+    "==": "EQUAL",
+    ">=": "GREATER_EQUAL",
+    "<=": "LESS_EQUAL",
     "=": "ASSIGN",
+    ">": "GREATER_THAN",
+    "<": "LESS_THAN",
     "+": "PLUS",
     "-": "MINUS",
     "*": "MULTIPLY",
-    "/": "DIVIDE",
-    ">": "GREATER_THAN",
-    "<": "LESS_THAN"
+    "/": "DIVIDE"
 }
 
 SYMBOLS = {
@@ -39,55 +41,48 @@ def lexer(source_code):
             i += 1
             continue
 
-        # Ignore // comments
+        # Ignore comments
         if source_code.startswith("//", i):
             while i < length and source_code[i] != "\n":
                 i += 1
             continue
 
-        # Two-character operators
-        if i + 1 < length:
-            two_chars = source_code[i:i + 2]
-
-            if two_chars == "==":
-                tokens.append(("EQUAL", two_chars))
-                i += 2
-                continue
-
-            if two_chars == ">=":
-                tokens.append(("GREATER_EQUAL", two_chars))
-                i += 2
-                continue
-
-            if two_chars == "<=":
-                tokens.append(("LESS_EQUAL", two_chars))
-                i += 2
-                continue
-
-        # Numbers
-        if source_code[i].isdigit() and source_code[i].isascii():
+        # Strings
+        if source_code[i] == '"':
             start = i
+            i += 1
 
             while (
                 i < length
-                and source_code[i].isascii()
-                and source_code[i].isdigit()
+                and source_code[i] != '"'
+                and source_code[i] != "\n"
             ):
                 i += 1
 
+            if i < length and source_code[i] == '"':
+                i += 1
+                tokens.append(("STRING", source_code[start:i]))
+            else:
+                tokens.append(("LEXICAL_ERROR", source_code[start:i]))
+
+            continue
+
+        # Numbers
+        if source_code[i] in "0123456789":
+            start = i
+
+            while i < length and source_code[i] in "0123456789":
+                i += 1
+
+            # Recognize a float only if digits follow the decimal point
             if (
                 i + 1 < length
                 and source_code[i] == "."
-                and source_code[i + 1].isascii()
-                and source_code[i + 1].isdigit()
+                and source_code[i + 1] in "0123456789"
             ):
                 i += 1
 
-                while (
-                    i < length
-                    and source_code[i].isascii()
-                    and source_code[i].isdigit()
-                ):
+                while i < length and source_code[i] in "0123456789":
                     i += 1
 
                 tokens.append(("FLOAT", source_code[start:i]))
@@ -96,53 +91,57 @@ def lexer(source_code):
 
             continue
 
-        # Strings
-        if source_code[i] == '"':
+        # Alphabetic words: keywords, identifiers, or lexical errors
+        # Uppercase letters: lexical errors
+        if "A" <= source_code[i] <= "Z":
             start = i
-            i += 1
 
-            while i < length and source_code[i] != '"' and source_code[i] != "\n":
+            while i < length and "A" <= source_code[i] <= "Z":
                 i += 1
 
-            if i < length and source_code[i] == '"':
-                i += 1
-                tokens.append(("STRING", source_code[start:i]))
-            else:
-                tokens.append(("LEXICAL_ERROR", source_code[start:i]))
+            tokens.append(("LEXICAL_ERROR", source_code[start:i]))
             continue
 
-
-        # Keywords and identifiers
-        if source_code[i].isascii() and source_code[i].isalpha():
+        # Lowercase words: keywords or identifiers
+        if "a" <= source_code[i] <= "z":
             start = i
 
-            while (
-                i < length
-                and source_code[i].isascii()
-                and source_code[i].isalpha()
-            ):
+            while i < length and "a" <= source_code[i] <= "z":
                 i += 1
 
             word = source_code[start:i]
 
             if word in KEYWORDS:
                 tokens.append((KEYWORDS[word], word))
-            elif word.islower():
-                tokens.append(("IDENTIFIER", word))
             else:
-                tokens.append(("LEXICAL_ERROR", word))
+                tokens.append(("IDENTIFIER", word))
 
+            continue
+
+        # Operators: check two-character operators first        
+        matched = False
+
+        for operator in ("==", ">=", "<="):
+            if source_code.startswith(operator, i):
+                tokens.append((OPERATORS[operator], operator))
+                i += len(operator)
+                matched = True
+                break
+
+        if matched:
             continue
 
         # One-character operators
         if source_code[i] in OPERATORS:
-            tokens.append((OPERATORS[source_code[i]], source_code[i]))
+            operator = source_code[i]
+            tokens.append((OPERATORS[operator], operator))
             i += 1
             continue
 
         # Symbols
         if source_code[i] in SYMBOLS:
-            tokens.append((SYMBOLS[source_code[i]], source_code[i]))
+            symbol = source_code[i]
+            tokens.append((SYMBOLS[symbol], symbol))
             i += 1
             continue
 
@@ -161,7 +160,10 @@ print("Type END on a new line when finished.\n")
 lines = []
 
 while True:
-    line = input()
+    try:
+        line = input()
+    except EOFError:
+        break
 
     if line == "END":
         break
