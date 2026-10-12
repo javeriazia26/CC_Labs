@@ -4,7 +4,6 @@
 #include <string.h>
 %}
 
-%x STRING_STATE
 
 %%
 
@@ -53,15 +52,21 @@
     printf("%-20s %s\n", "LEXICAL_ERROR", yytext);
 }
 
-
-[a-z]+ {
-    printf("%-20s %s\n", "IDENTIFIER", yytext);
+[A-Z]+ {
+    printf("%-20s %s\n", "LEXICAL_ERROR", yytext);
 }
 
-
-
-[A-Za-z]+ {
-    printf("%-20s %s\n", "LEXICAL_ERROR", yytext);
+[a-z]+ {
+    if (strcmp(yytext, "let") == 0)
+        printf("%-20s %s\n", "LET", yytext);
+    else if (strcmp(yytext, "print") == 0)
+        printf("%-20s %s\n", "PRINT", yytext);
+    else if (strcmp(yytext, "if") == 0)
+        printf("%-20s %s\n", "IF", yytext);
+    else if (strcmp(yytext, "else") == 0)
+        printf("%-20s %s\n", "ELSE", yytext);
+    else
+        printf("%-20s %s\n", "IDENTIFIER", yytext);
 }
 
 [ \t\r\n]+ {
@@ -78,43 +83,23 @@
 
 int main(void)
 {
-    char source_code[10000];
-    char line[1000];
+    FILE *file = fopen("../program.txt", "r");
 
-    source_code[0] = '\0';
-
-    printf("Enter your program.\n");
-    printf("Type END on a new line when finished.\n\n");
-
-    while (fgets(line, sizeof(line), stdin) != NULL)
+    if (file == NULL)
     {
-        if (strcmp(line, "END\n") == 0 ||
-            strcmp(line, "END\r\n") == 0 ||
-            strcmp(line, "END") == 0)
-        {
-            break;
-        }
-
-        if (strlen(source_code) + strlen(line) >= sizeof(source_code))
-        {
-            printf("Input is too long.\n");
-            return 1;
-        }
-
-        strcat(source_code, line);
+        printf("Error: Cannot open program.txt\n");
+        return 1;
     }
 
-    YY_BUFFER_STATE buffer = yy_scan_string(source_code);
+    yyin = file;
 
-    printf("\nTokens:\n\n");
-
+    printf("Tokens:\n\n");
     yylex();
 
-    yy_delete_buffer(buffer);
+    fclose(file);
 
     return 0;
 }
-
 
 
 int yywrap(void)
