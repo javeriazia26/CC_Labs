@@ -1,0 +1,66 @@
+
+{
+LET a;
+let b = 20, c;
+
+c = b * 4;
+if c <= 50:
+   print("wrong guess!");
+if c == 80:
+   print(right guess!);
+else:
+   print("try again");
+}
+END
+
+Tokens:
+
+LBRACE               {
+LEXICAL_ERROR        LET
+IDENTIFIER           a
+SEMICOLON            ;
+LET                  let
+IDENTIFIER           b
+ASSIGN               =
+INTEGER              20
+COMMA                ,
+IDENTIFIER           c
+SEMICOLON            ;
+IDENTIFIER           c
+ASSIGN               =
+IDENTIFIER           b
+MULTIPLY             *
+INTEGER              4
+SEMICOLON            ;
+IF                   if
+IDENTIFIER           c
+LESS_EQUAL           <=
+INTEGER              50
+COLON                :
+PRINT                print
+LPAREN               (
+STRING               wrong guess!
+RPAREN               )
+SEMICOLON            ;
+IF                   if
+IDENTIFIER           c
+EQUAL                ==
+INTEGER              80
+COLON                :
+PRINT                print
+LPAREN               (
+LEXICAL_ERROR        right
+LEXICAL_ERROR        guess
+LEXICAL_ERROR        !
+RPAREN               )
+SEMICOLON            ;
+ELSE                 else
+COLON                :
+PRINT                print
+LPAREN               (
+STRING               try again
+RPAREN               )
+SEMICOLON            ;
+RBRACE               }
+PS D:\CC Project> 
+
