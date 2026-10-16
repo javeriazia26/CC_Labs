@@ -1,0 +1,50 @@
+let zxja120@jsk = 12
+while treu :
+{hello world}
+""this is comment
+//this is comment for / division
+q/b
+q = 10 
+b = 12
+z = q/b 
+print(z)
+END
+
+Tokens:
+
+LET                  let
+IDENTIFIER           zxja
+INTEGER              120
+LEXICAL_ERROR        @
+IDENTIFIER           jsk
+ASSIGN               =
+INTEGER              12
+IDENTIFIER           while
+IDENTIFIER           treu
+COLON                :
+LBRACE               {
+IDENTIFIER           hello
+IDENTIFIER           world
+RBRACE               }
+STRING               ""
+IDENTIFIER           this
+IDENTIFIER           is
+IDENTIFIER           comment
+IDENTIFIER           q
+DIVIDE               /
+IDENTIFIER           b
+IDENTIFIER           q
+ASSIGN               =
+INTEGER              10
+IDENTIFIER           b
+ASSIGN               =
+INTEGER              12
+IDENTIFIER           z
+ASSIGN               =
+IDENTIFIER           q
+DIVIDE               /
+IDENTIFIER           b
+PRINT                print
+LPAREN               (
+IDENTIFIER           z
+RPAREN               )
